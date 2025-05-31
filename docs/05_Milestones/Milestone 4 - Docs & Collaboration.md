@@ -1,6 +1,6 @@
-# ✅ Milestone 4 – Docs & Collaboration
+# Milestone 4 – Docs & Collaboration
 
-## 🧠 Goal
+## Goal
 
 Create clear, consistent documentation to:
 - Help team members and future contributors understand the project
@@ -11,7 +11,7 @@ This milestone focuses on building long-term maintainability, not just functiona
 
 ---
 
-## 📦 Output
+## Output
 
 - Obsidian vault well-organized and export-ready
 - Top-level `README.md` for GitHub
@@ -26,7 +26,7 @@ This milestone focuses on building long-term maintainability, not just functiona
 
 ---
 
-## 📋 Tasks
+## Tasks
 
 - [ ] Finalize vault structure (01–11 folders)
 - [ ] Fill `07_Design_Decisions` and `02_Input_Spec`
@@ -40,17 +40,17 @@ This milestone focuses on building long-term maintainability, not just functiona
 
 ---
 
-## 🧰 Tools & Formats
+## Tools & Formats
 
-- 📁 Obsidian (primary documentation source)
-- 📄 Markdown (`.md`) files in GitHub repo
-- 📘 Code comments (in Python modules)
-- 🔖 Tags and backlinks in Obsidian
-- 📌 GitHub Issues / Discussions (later)
+- Obsidian (primary documentation source)
+- Markdown (`.md`) files in GitHub repo
+- Code comments (in Python modules)
+- Tags and backlinks in Obsidian
+- GitHub Issues / Discussions (later)
 
 ---
 
-## 🧠 Collaboration Guidelines
+## Collaboration Guidelines
 
 | Topic | Approach |
 |-------|----------|
@@ -61,7 +61,7 @@ This milestone focuses on building long-term maintainability, not just functiona
 
 ---
 
-## 💬 Contributor Onboarding
+## Contributor Onboarding
 
 Top-level files for GitHub:
 
@@ -71,7 +71,7 @@ Top-level files for GitHub:
 
 ---
 
-## 🔗 Related Notes
+## Related Notes
 
 - `[[README_Draft]]` (if created)
 - `[[Template_Design_Principles]]`
@@ -81,7 +81,7 @@ Top-level files for GitHub:
 
 ---
 
-## 🧭 Status
+## Status
 
 🛠 In Progress → Complete when:
 - Project has a `README.md` and contributor guide
