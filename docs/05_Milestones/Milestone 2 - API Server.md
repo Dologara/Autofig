@@ -1,6 +1,6 @@
-# ✅ Milestone 2 – API Server
+# Milestone 2 – API Server
 
-## 🧠 Goal
+## Goal
 
 Wrap the existing CLI logic into a minimal **FastAPI server** to expose NetAutoGen's core features through a RESTful API.
 
@@ -11,7 +11,7 @@ This enables external tools (or a future Web UI) to:
 
 ---
 
-## 📦 Output
+## Output
 
 - `app.py` FastAPI server entry point
 - `/api/generate` POST endpoint
@@ -22,7 +22,7 @@ This enables external tools (or a future Web UI) to:
 
 ---
 
-## 🔧 Core API Features
+## Core API Features
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
@@ -32,7 +32,7 @@ This enables external tools (or a future Web UI) to:
 
 ---
 
-## 📋 Tasks
+## Tasks
 
 - [ ] Set up FastAPI project structure
 - [ ] Move core CLI logic into reusable Python functions
@@ -45,7 +45,7 @@ This enables external tools (or a future Web UI) to:
 
 ---
 
-## 📂 Suggested Folder Structure
+## Suggested Folder Structure
 
 /web/  
 ├── app.py  
@@ -57,7 +57,7 @@ This enables external tools (or a future Web UI) to:
 
 ---
 
-## 🔐 Security Notes
+## Security Notes
 
 - No auth in MVP — secure in Milestone 4
 - Limit file size / input length
@@ -65,17 +65,17 @@ This enables external tools (or a future Web UI) to:
 
 ---
 
-## 🧪 Testing Scenarios
+## Testing Scenarios
 
-- ✅ Valid YAML input via JSON body
-- ✅ Upload `.yaml` file
-- ❌ Malformed input returns error
-- ✅ Output returned inline or as `.txt` attachment
-- ✅ Response includes CLI config and metadata (e.g., device hostname)
+- Valid YAML input via JSON body
+- Upload `.yaml` file
+- Malformed input returns error
+- Output returned inline or as `.txt` attachment
+- Response includes CLI config and metadata (e.g., device hostname)
 
 ---
 
-## 🔗 Related Notes
+## Related Notes
 
 - `[[CLI_First_Design]]`
 - `[[Output_Format]]`
@@ -84,7 +84,7 @@ This enables external tools (or a future Web UI) to:
 
 ---
 
-## 🧭 Status
+## Status
 
 In Progress → Ready when server can accept YAML input and return working config for at least one device.
 
