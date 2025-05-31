@@ -2,7 +2,7 @@
 # Project Overview
 
 ## Name
-NetAutoGen (to be changed)
+Autofig
 
 ## Purpose
 A vendor-agnostic network configuration generator focused on simplicity, speed, and usability.
