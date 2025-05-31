@@ -1,6 +1,6 @@
-# ✅ Milestone 1 – Core CLI
+# Milestone 1 – Core CLI
 
-## 🧠 Goal
+## Goal
 
 Build the core CLI-based engine that:
 - Accepts structured YAML input
@@ -10,7 +10,7 @@ Build the core CLI-based engine that:
 
 ---
 
-## 📦 Output
+## Output
 
 - Fully working CLI prototype
 - Input: `.yaml` file
@@ -19,7 +19,7 @@ Build the core CLI-based engine that:
   ```bash
   python main.py --input inputs/lab.yaml
 ```
-## 🔧 Key Components
+## Key Components
 
 |Module|Description|
 |---|---|
@@ -32,7 +32,7 @@ Build the core CLI-based engine that:
 
 ---
 
-## 📋 Tasks
+## Tasks
 
 -  Design folder structure (`core/`, `cli/`, `inputs/`, `outputs/`)
     
@@ -53,22 +53,22 @@ Build the core CLI-based engine that:
 
 ---
 
-## 🧪 Testing
+## Testing
 
 Test scenarios:
 
-- ✅ Valid full input (router + switch)
+- Valid full input (router + switch)
     
-- ⚠️ Missing optional global block (use defaults)
+- Missing optional global block (use defaults)
     
-- ❌ Invalid YAML (catch syntax or structure errors)
+- Invalid YAML (catch syntax or structure errors)
     
-- ✅ Device overrides global SSH settings
+- Device overrides global SSH settings
     
 
 ---
 
-## 🔗 Dependencies
+## Dependencies
 
 - `[[Template_Design_Principles]]`
     
@@ -81,9 +81,9 @@ Test scenarios:
 
 ---
 
-## 🧭 Status
+## Status
 
-🎯 In Progress → Complete when `main.py` can generate per-device config from any valid YAML in `/inputs/`.
+In Progress → Complete when `main.py` can generate per-device config from any valid YAML in `/inputs/`.
 
 Once this milestone is complete, we move to:
 
