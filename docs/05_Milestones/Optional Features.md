@@ -1,10 +1,10 @@
-# 🚧 Optional Features
+# Optional Features
 
 These are bonus or future enhancements that would improve usability, portability, and professional deployment — but are **not required for MVP** or core milestones.
 
 ---
 
-## 🧪 Simulation & Lab Integration
+## Simulation & Lab Integration
 
 - [ ] **GNS3 Output Format**
   - Generate configs tailored for import into GNS3 topologies
@@ -15,7 +15,7 @@ These are bonus or future enhancements that would improve usability, portability
 
 ---
 
-## 📊 Monitoring & Insights
+## Monitoring & Insights
 
 - [ ] **Analytics Dashboard**
   - Track how many configs were generated
@@ -27,7 +27,7 @@ These are bonus or future enhancements that would improve usability, portability
 
 ---
 
-## 🔄 Import/Export Extensions
+## Import/Export Extensions
 
 - [ ] **Import Config Snippets**
   - Ability to import partial device configs and re-use fields
@@ -41,7 +41,7 @@ These are bonus or future enhancements that would improve usability, portability
 
 ---
 
-## 🛠️ Dev Tools
+## Dev Tools
 
 - [ ] **Config Linter**
   - Validate rendered CLI output for vendor syntax
@@ -54,7 +54,7 @@ These are bonus or future enhancements that would improve usability, portability
 
 ---
 
-## 🎨 UI Features (Post-MVP)
+## UI Features (Post-MVP)
 
 - [ ] **YAML Wizard**
   - Web-based step-by-step form to generate input files
@@ -64,7 +64,7 @@ These are bonus or future enhancements that would improve usability, portability
 
 ---
 
-## 🤝 Team / Collab Features
+## Team / Collab Features
 
 - [ ] **Multi-user Mode**
   - Allow shared YAML sessions
@@ -75,7 +75,7 @@ These are bonus or future enhancements that would improve usability, portability
 
 ---
 
-## 🧠 Prioritization Notes
+## Prioritization Notes
 
 These features can be picked up based on:
 - Team size and bandwidth
@@ -86,7 +86,7 @@ They’re useful, but **should not block** the main CLI → API → Web UI pipel
 
 ---
 
-## 🔗 Related Notes
+## Related Notes
 
 - `[[API_Server]]`
 - `[[Web_UI]]`
