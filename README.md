@@ -1,4 +1,4 @@
-# Autofig (NetAutoGen Planning Stage)
+# Autofig 
 
 Autofig is a vendor-agnostic network configuration generator. It takes structured YAML inputs and uses Jinja2 templates to generate CLI configurations for various network devices.
 
