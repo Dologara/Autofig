@@ -1,6 +1,6 @@
-# ✅ Milestone 5 – Template Expansion
+# Milestone 5 – Template Expansion
 
-## 🧠 Goal
+## Goals
 
 Expand NetAutoGen’s templating support to include:
 - Additional Cisco device types (e.g., Layer 3 switches)
@@ -11,7 +11,7 @@ This milestone scales the system from a prototype to a production-ready tool for
 
 ---
 
-## 📦 Output
+## Output
 
 - New `.j2` templates in `/templates/`
 - Updated input YAML examples (`/inputs/`)
@@ -21,7 +21,7 @@ This milestone scales the system from a prototype to a production-ready tool for
 
 ---
 
-## 📋 Tasks
+## Tasks
 
 - [x] Support Cisco L2 switch (access, trunk, VLANs)
 - [x] Support Cisco L3 switch (SVIs, inter-VLAN routing)
@@ -33,7 +33,7 @@ This milestone scales the system from a prototype to a production-ready tool for
 
 ---
 
-## 🧱 Template Naming Convention
+## Template Naming Convention
 
 templates/  
 ├── cisco_router.j2  
@@ -48,7 +48,7 @@ Each template matches:
 
 ---
 
-## 🔁 Example Features to Add
+## Example Features to Add
 
 | Feature | Template Target |
 |--------|-----------------|
@@ -62,16 +62,16 @@ Each template matches:
 
 ---
 
-## 🧪 Testing Plan
+## Testing Plan
 
-- ✅ Valid YAML → Valid CLI output
-- ✅ Missing fields → Templates use `| default(...)`
-- ❌ Unsupported combo (e.g., OSPF on L2) → warn or skip
+- Valid YAML → Valid CLI output
+- Missing fields → Templates use `| default(...)`
+- Unsupported combo (e.g., OSPF on L2) → warn or skip
 - YAML test + generated `.txt` in `/outputs/`
 
 ---
 
-## 📁 Optional Enhancements
+## Optional Enhancements
 
 - `templates/common/` folder for shared logic (Jinja includes)
 - Field validation per template using schemas
@@ -79,7 +79,7 @@ Each template matches:
 
 ---
 
-## 🔗 Related Notes
+## Related Notes
 
 - `[[Template_Design_Principles]]`
 - `[[Field_Mapping_Reference]]`
@@ -88,9 +88,9 @@ Each template matches:
 
 ---
 
-## 🧭 Status
+## Status
 
-⏳ In Progress → Complete when:
+In Progress → Complete when:
 - 3+ device types are fully supported
 - 1+ non-Cisco template exists
 - Input logic can handle required fields for each template
