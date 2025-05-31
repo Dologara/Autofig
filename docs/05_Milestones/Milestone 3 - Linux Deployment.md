@@ -1,6 +1,6 @@
-# ✅ Milestone 3 – Linux Deployment
+# Milestone 3 – Linux Deployment
 
-## 🧠 Goal
+## Goal
 
 Ensure NetAutoGen can be:
 - Cloned or downloaded onto any Linux machine
@@ -11,7 +11,7 @@ This milestone prepares the project for real-world testing, labs, or small-scale
 
 ---
 
-## 📦 Output
+## Output
 
 - A Linux-ready install process
 - CLI executable via `main.py`
@@ -20,7 +20,7 @@ This milestone prepares the project for real-world testing, labs, or small-scale
 
 ---
 
-## 🗂 Recommended Directory Layout
+## Recommended Directory Layout
 
 ```bash
 netautogen/
@@ -34,7 +34,7 @@ netautogen/
 ├── README.md
 ├── run.sh   # optional helper script
 ```
-## 📋 Tasks
+## Tasks
 
 -  Clean up folder structure
     
@@ -53,7 +53,7 @@ netautogen/
 
 ---
 
-## 🧪 Testing Scenarios
+## Testing Scenarios
 
 |Scenario|Outcome|
 |---|---|
@@ -64,7 +64,7 @@ netautogen/
 
 ---
 
-## 🧠 Considerations
+## Considerations
 
 - Target OS: Ubuntu/Debian (bash-compatible systems)
     
@@ -77,7 +77,7 @@ netautogen/
 
 ---
 
-## 🔮 Optional Enhancements
+## Optional Enhancements
 
 - `Makefile` for easy commands
     
@@ -88,7 +88,7 @@ netautogen/
 
 ---
 
-## 🔗 Related Notes
+## Related Notes
 
 - `[[Milestone 1 - Core CLI]]`
     
