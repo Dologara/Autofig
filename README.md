@@ -9,22 +9,7 @@ Autofig is a vendor-agnostic network configuration generator. It takes structure
 - In early development
 - Vault planning complete
 - Folder structure initialized
-- CLI and core logic in progress
-
----
-
-## Directory Structure (Planned)
-
-Autofig/
-├── core/ # Core Python logic (input loading, rendering, etc.)
-├── templates/ # Jinja2 templates for routers, switches, etc.
-├── inputs/ # YAML input files
-├── outputs/ # Generated device configs
-├── cli/ # CLI entry point scripts
-├── scratch/ # Local testing and prototypes
-├── docs/ # Obsidian vault documentation
-├── tests/ # Unit and integration tests
-
+- CLI and core logic 
 
 ---
 
