@@ -1,6 +1,6 @@
-# ✅ Milestone 6 – Web UI
+# Milestone 6 – Web UI
 
-## 🧠 Goal
+## Goal
 
 Build a simple browser-based frontend to:
 - Upload or paste YAML input
@@ -11,7 +11,7 @@ The UI will make the tool accessible to non-CLI users and allow quick testing or
 
 ---
 
-## 📦 Output
+## Output
 
 - Frontend folder (e.g., `/web_ui/`)
 - `index.html` or frontend framework (React/Vue/etc.)
@@ -21,7 +21,7 @@ The UI will make the tool accessible to non-CLI users and allow quick testing or
 
 ---
 
-## 📋 Tasks
+## Tasks
 
 - [x] Decide stack: simple HTML/JS, or React (preferred long-term)
 - [x] Create UI layout: YAML input box, Submit button, Output area
@@ -33,13 +33,13 @@ The UI will make the tool accessible to non-CLI users and allow quick testing or
 
 ---
 
-## 🖼️ Sample UI Flow
+## Sample UI Flow
 
 ```text
 [YAML Input Box] → [Submit] → [API POST] → [Show Config / Download]
 ```
 
-## ⚙️ Suggested Tech Stack
+## Suggested Tech Stack
 
 |Component|Option|
 |---|---|
@@ -50,7 +50,7 @@ The UI will make the tool accessible to non-CLI users and allow quick testing or
 
 ---
 
-## 🧪 Testing
+## Testing
 
 |Test Case|Outcome|
 |---|---|
@@ -61,7 +61,7 @@ The UI will make the tool accessible to non-CLI users and allow quick testing or
 
 ---
 
-## 🔗 Related Notes
+## Related Notes
 
 - `[[Milestone 2 - API Server]]`
     
@@ -74,7 +74,7 @@ The UI will make the tool accessible to non-CLI users and allow quick testing or
 
 ---
 
-## 🧭 Status
+## Status
 
 🛠 In Progress → Complete when:
 
@@ -87,7 +87,7 @@ The UI will make the tool accessible to non-CLI users and allow quick testing or
 
 ---
 
-## 🔮 Future Features
+## Future Features
 
 - Login/auth integration
     
