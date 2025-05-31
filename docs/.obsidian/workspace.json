@@ -1,0 +1,199 @@
+{
+  "main": {
+    "id": "92184a9a5f793c82",
+    "type": "split",
+    "children": [
+      {
+        "id": "46f872f12b07fad0",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "42bf7f6c3aac01fd",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "5b5c2fcae2e30127",
+    "type": "split",
+    "children": [
+      {
+        "id": "7c9a8f82a2dc3d56",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "e85f0c800f14941e",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "961755da3dfb9bdb",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "ff0227118675dfd8",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "48a27f8c094f3b32",
+    "type": "split",
+    "children": [
+      {
+        "id": "81a546710cfffce1",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6b4b5567f8486499",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "d540e2596699d58c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "198c6ab100dc1fe1",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "08ad5df9c0ea3681",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Untitled.canvas",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Untitled"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "42bf7f6c3aac01fd",
+  "lastOpenFiles": [
+    "07_Design_Decisions/Extensibility_Plan.md",
+    "07_Design_Decisions/Templating_Strategy.md",
+    "07_Design_Decisions/Output_Format.md",
+    "07_Design_Decisions/CLI_First_Design.md",
+    "07_Design_Decisions/General_vs_Device_Fields.md",
+    "07_Design_Decisions/Why_YAML.md",
+    "05_Tasks_And_Milestones/ToDo_List.md",
+    "05_Tasks_And_Milestones/Roadmap.md",
+    "05_Tasks_And_Milestones/MVP_Plan.md",
+    "05_Tasks_And_Milestones/Assigned_Tasks.md",
+    "10_Protocols/HSRP.md",
+    "09_Logs/Planning.md",
+    "08_Reference/Cisco_Config_CheatSheet.md",
+    "05_Milestones/Milestone Roadmap.md",
+    "03_Template_System/Cisco_Router_Template.md",
+    "03_Template_System/Switch_Template.md",
+    "03_Template_System/Jinja2_Syntax.md",
+    "03_Template_System/Template_Design_Principles.md",
+    "03_Template_System",
+    "04_Code_Modules/03_Template_System/Switch_Template.md",
+    "04_Code_Modules/03_Template_System/Cisco_Router_Template.md",
+    "04_Code_Modules/03_Template_System/Template_Design_Principles.md",
+    "04_Code_Modules/03_Template_System/Jinja2_Syntax.md",
+    "04_Code_Modules/03_Template_System",
+    "05_Milestones/Overview.md",
+    "05_Milestones/Optional Features.md",
+    "05_Milestones/Milestone 7 - Security.md",
+    "05_Milestones/Milestone 6 - Web UI.md",
+    "05_Milestones",
+    "Untitled 1.canvas",
+    "Untitled.canvas"
+  ]
+}
