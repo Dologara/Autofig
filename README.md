@@ -26,7 +26,7 @@ Autofig is a vendor-agnostic network configuration generator. It takes structure
 
 ## Docs
 
-All design notes and plans are maintained in an [Obsidian vault](docs/) (markdown-based).
+All design notes and plans are maintained in an [Obsidian vault](docs/).
 
 ---
 
