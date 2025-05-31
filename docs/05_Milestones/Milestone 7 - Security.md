@@ -1,7 +1,7 @@
 
-# ✅ Milestone 7 – Security
+# Milestone 7 – Security
 
-## 🧠 Goal
+## Goal
 
 Add core security features to make the NetAutoGen API safe for broader use.
 
@@ -13,7 +13,7 @@ This includes:
 
 ---
 
-## 📦 Output
+## Output
 
 - Token-based authentication for API access
 - Input validation logic (sanity limits, allowed keys)
@@ -23,7 +23,7 @@ This includes:
 
 ---
 
-## 📋 Tasks
+## Tasks
 
 - [ ] Add simple API token check (`Authorization: Bearer`)
 - [ ] Load token from env var or `config/security.yaml`
@@ -35,19 +35,19 @@ This includes:
 
 ---
 
-## 🧪 Testing
+## Testing
 
 | Scenario | Expected |
 |----------|----------|
-| No token → call `/api/generate` | 🔒 401 Unauthorized |
-| Valid token → process as normal | ✅ 200 OK |
-| Input > 1MB | ❌ Rejected with 413 |
-| Malformed YAML | ❌ Graceful error |
-| Password in CLI prompt | ✅ Hidden input |
+| No token → call `/api/generate` | 401 Unauthorized |
+| Valid token → process as normal | 200 OK |
+| Input > 1MB | Rejected with 413 |
+| Malformed YAML | Graceful error |
+| Password in CLI prompt | Hidden input |
 
 ---
 
-## 🔐 Future Enhancements
+## Future Enhancements
 
 - Role-based access (admin, viewer)
 - Session expiration / token rotation
@@ -57,7 +57,7 @@ This includes:
 
 ---
 
-## 🔗 Related Notes
+## Related Notes
 
 - `[[API_Server]]`
 - `[[Config_Merger]]`
@@ -66,7 +66,7 @@ This includes:
 
 ---
 
-## 🧭 Status
+## Status
 
 🛠 In Progress → Ready when:
 - API blocks unauthorized access
