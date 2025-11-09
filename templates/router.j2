@@ -1,0 +1,60 @@
+! ============================================================
+!  Autofig Generated Router Configuration
+! ============================================================
+
+hostname {{ device.hostname }}
+
+!
+! ===== Interface Configuration =====
+!
+{% for intf in device.interfaces %}
+interface {{ intf.name }}
+  ip address {{ intf.ip }} {{ intf.mask }}
+  description {{ intf.description | default("No description") }}
+  no shutdown
+!
+{% endfor %}
+
+!
+! ===== Static Routes =====
+!
+{% if device.routes %}
+{% for route in device.routes %}
+ip route {{ route.destination }} {{ route.next_hop }}
+{% endfor %}
+{% endif %}
+
+!
+! ===== Services =====
+!
+{% if 'ntp' in device.services %}
+{% for server in defaults.ntp_servers %}
+ntp server {{ server }}
+{% endfor %}
+{% endif %}
+
+{% if 'dns' in device.services %}
+ip name-server {% for dns in defaults.dns_servers %}{{ dns }} {% endfor %}
+{% endif %}
+
+{% if 'ssh' in device.services %}
+ip domain-name {{ defaults.domain | default("local") }}
+crypto key generate rsa modulus {{ defaults.ssh_rsa_bits | default(2048) }}
+line vty 0 4
+ transport input ssh
+ login local
+{% endif %}
+
+!
+! ===== Banner =====
+!
+{% if device.security and device.security.banner %}
+banner motd @
+{{ device.security.banner }}
+@
+{% endif %}
+
+!
+! ===== End =====
+!
+end
