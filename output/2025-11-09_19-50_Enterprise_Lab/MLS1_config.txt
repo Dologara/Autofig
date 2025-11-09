@@ -1,0 +1,130 @@
+! ============================================================
+!  Autofig Generated Multilayer Switch Configuration
+! ============================================================
+
+hostname CoreSwitch
+
+!
+! ===== VLAN Configuration =====
+!
+
+
+vlan 10
+ name STAFF
+
+vlan 20
+ name GUEST
+
+vlan 30
+ name MGMT
+
+
+
+!
+! ===== Interface Configuration =====
+!
+
+
+interface Gig0/1
+
+ switchport mode trunk
+
+ description Uplink to Edge Router 
+ no shutdown
+!
+
+interface Gig0/2
+
+ switchport mode trunk
+
+ description Uplink to AccessSwitch1 
+ no shutdown
+!
+
+interface Gig0/3
+
+ switchport mode trunk
+
+ description Uplink to AccessSwitch2 
+ no shutdown
+!
+
+
+
+!
+! ===== SVI Configuration =====
+!
+
+ip routing
+
+interface Vlan10
+ ip address 192.168.10.1 255.255.255.0
+ no shutdown
+!
+
+interface Vlan20
+ ip address 192.168.20.1 255.255.255.0
+ no shutdown
+!
+
+interface Vlan30
+ ip address 192.168.30.1 255.255.255.0
+ no shutdown
+!
+
+
+
+!
+! ===== Routing =====
+!
+
+
+ip route 0.0.0.0/0 10.0.0.1
+
+
+
+
+router ospf 1
+ router-id 192.168.10.1 
+
+ network 10.0.0.0 0.0.0.3 area 0
+
+ network 192.168.10.0 0.0.0.255 area 0
+
+ network 192.168.20.0 0.0.0.255 area 0
+
+
+
+!
+! ===== Services =====
+!
+
+
+ntp server pool.ntp.org
+
+
+
+
+ip domain-name corp.local
+
+
+crypto key generate rsa modulus 2048
+line vty 0 4
+ transport input ssh
+ login local
+
+!
+! ===== Banner =====
+!
+
+banner motd @
+Authorized Access Only!
+Core Switch – Corp Network
+
+@
+
+
+!
+! ===== End =====
+!
+end

@@ -1,0 +1,63 @@
+! ============================================================
+!  Autofig Generated Configuration
+! ============================================================
+
+hostname CoreSwitch
+
+!
+! ===== Interfaces =====
+!
+
+
+interface Gig0/1
+
+ description Uplink to Edge Router 
+ no shutdown
+!
+
+interface Gig0/2
+
+ description Uplink to AccessSwitch1 
+ no shutdown
+!
+
+interface Gig0/3
+
+ description Uplink to AccessSwitch2 
+ no shutdown
+!
+
+
+
+!
+! ===== Static Routes =====
+!
+
+
+!
+! ===== Services =====
+!
+
+
+
+
+
+!
+! ===== SSH =====
+!
+
+
+!
+! ===== Banner =====
+!
+
+banner motd @
+Unauthorized access prohibited. Corporate Lab Environment.
+
+@
+
+
+!
+! ===== End =====
+!
+end

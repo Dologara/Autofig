@@ -1,0 +1,101 @@
+! ============================================================
+!  Autofig Generated Multilayer Switch Configuration
+! ============================================================
+
+hostname {{ device.hostname }}
+
+!
+! ===== VLAN Configuration =====
+!
+{% if device.vlans %}
+{% for vlan in device.vlans %}
+vlan {{ vlan.id }}
+ name {{ vlan.name }}
+{% endfor %}
+{% else %}
+! No VLANs defined
+{% endif %}
+
+!
+! ===== Interface Configuration =====
+!
+{% if device.interfaces %}
+{% for intf in device.interfaces %}
+interface {{ intf.name }}
+{% if intf.mode == "access" %}
+ switchport mode access
+ switchport access vlan {{ intf.vlan }}
+{% elif intf.mode == "trunk" %}
+ switchport mode trunk
+{% endif %}
+{% if intf.description %} description {{ intf.description }} {% endif %}
+ no shutdown
+!
+{% endfor %}
+{% else %}
+! No Interfaces defined
+{% endif %}
+
+!
+! ===== SVI Configuration =====
+!
+{% if device.svis %}
+ip routing
+{% for svi in device.svis %}
+interface Vlan{{ svi.vlan }}
+ ip address {{ svi.ip }} {{ svi.mask }}
+ no shutdown
+!
+{% endfor %}
+{% else %}
+! No SVIs defined
+{% endif %}
+
+!
+! ===== Routing =====
+!
+{% if device.static_routes %}
+{% for route in device.static_routes %}
+ip route {{ route.destination }} {{ route.next_hop }}
+{% endfor %}
+{% endif %}
+
+{% if device.ospf %}
+router ospf {{ device.ospf.process_id }}
+{% if device.ospf.router_id %} router-id {{ device.ospf.router_id }} {% endif %}
+{% for net in device.ospf.networks %}
+ network {{ net.network }} {{ net.wildcard }} area {{ net.area }}
+{% endfor %}
+{% endif %}
+
+!
+! ===== Services =====
+!
+{% if device.services.ntp_servers %}
+{% for server in device.services.ntp_servers %}
+ntp server {{ server }}
+{% endfor %}
+{% endif %}
+
+{% if device.services.domain %}
+ip domain-name {{ device.services.domain }}
+{% endif %}
+
+crypto key generate rsa modulus {{ device.services.ssh_rsa_bits | default(2048) }}
+line vty 0 4
+ transport input ssh
+ login local
+
+!
+! ===== Banner =====
+!
+{% if device.security and device.security.banner %}
+banner motd @
+{{ device.security.banner }}
+@
+{% endif %}
+
+!
+! ===== End =====
+!
+end

@@ -1,0 +1,14 @@
+vendor: cisco
+type: multilayer_switch
+
+defaults:
+  os: ios
+  ssh_rsa_bits: 2048
+  services: [ssh, ntp, dns]
+  banner: |
+    Cisco Multilayer Switch - Autofig Generated Config
+  ntp_servers:
+    - pool.ntp.org
+  dns_servers:
+    - 1.1.1.1
+    - 8.8.8.8

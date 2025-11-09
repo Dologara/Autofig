@@ -1,0 +1,73 @@
+! ============================================================
+!  Autofig Generated Router Configuration
+! ============================================================
+
+hostname EdgeRouter
+
+!
+! ===== Interface Configuration =====
+!
+
+interface Gig0/0
+  ip address 203.0.113.2 255.255.255.252
+  description WAN Uplink
+  no shutdown
+!
+
+interface Gig0/1
+  ip address 10.0.0.1 255.255.255.252
+  description Link to Core Switch
+  no shutdown
+!
+
+
+!
+! ===== Static Routes =====
+!
+
+! No static routes defined
+
+!
+
+!
+! ===== OSPF Configuration =====
+!
+
+router ospf 1
+
+ network 10.0.0.0 0.0.0.3 area 0
+
+
+
+
+
+! ===== Services =====
+!
+
+
+
+
+
+
+!
+! ===== DHCP Configuration =====
+!
+
+
+
+
+!
+! ===== Banner =====
+!
+
+banner motd @
+Authorized Access Only!
+Edge Router – Corp Network
+
+@
+
+
+!
+! ===== End =====
+!
+end

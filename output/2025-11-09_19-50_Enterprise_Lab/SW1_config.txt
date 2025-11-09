@@ -1,0 +1,98 @@
+! ============================================================
+!  Autofig Generated Switch Configuration
+! ============================================================
+
+hostname AccessSwitch1
+
+!
+! ===== VLAN Configuration =====
+!
+
+
+vlan 10
+ name STAFF
+
+vlan 20
+ name GUEST
+
+
+
+!
+! ===== Interface Configuration =====
+!
+
+
+interface Gig0/1
+
+ switchport mode access
+ switchport access vlan 10
+
+
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+
+
+
+ description Staff Workstation
+
+ no shutdown
+!
+
+interface Gig0/24
+
+ switchport mode trunk
+
+
+
+
+ description Uplink to Core Switch
+
+ no shutdown
+!
+
+
+
+
+!
+! ===== Services =====
+!
+
+
+ntp server pool.ntp.org
+
+
+
+
+ip domain-name corp.local
+crypto key generate rsa modulus 2048
+line vty 0 4
+ transport input ssh
+ login local
+
+
+
+!
+! ===== Spanning Tree =====
+!
+
+spanning-tree mode rapid-pvst
+
+
+
+
+
+!
+! ===== Banner =====
+!
+
+banner motd @
+Access Switch 1 – Corporate Network
+
+@
+
+
+!
+! ===== End =====
+!
+end
