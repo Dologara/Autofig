@@ -1,0 +1,50 @@
+schema_version: 1.0
+topology_name: Branch Office
+
+defaults:
+  domain: branch.local
+  dns_servers: [8.8.8.8, 8.8.4.4]
+  ntp_servers: [pool.ntp.org]
+  banner: |
+    Branch Office Network - Authorized Access Only.
+
+devices:
+  - name: R1
+    hostname: BranchRouter
+    type: router
+    vendor: cisco
+    interfaces:
+      - name: Gig0/0
+        ip: 192.168.10.1
+        mask: 255.255.255.0
+        description: Branch LAN
+      - name: Gig0/1
+        ip: 198.51.100.2
+        mask: 255.255.255.252
+        description: WAN Uplink
+    routes:
+      - destination: 0.0.0.0/0
+        next_hop: 198.51.100.1
+    services: [ssh, ntp, dns]
+
+  - name: SW1
+    hostname: BranchSwitch
+    type: switch
+    vendor: cisco
+    vlans:
+      - id: 30
+        name: SALES
+      - id: 40
+        name: MANAGEMENT
+    interfaces:
+      - name: Gig0/1
+        mode: access
+        vlan: 30
+        description: Sales PC
+      - name: Gig0/2
+        mode: access
+        vlan: 40
+        description: Manager Desk
+      - name: Gig0/24
+        mode: trunk
+        description: Uplink to Router

@@ -1,0 +1,67 @@
+! ============================================================
+!  Autofig Generated Router Configuration
+! ============================================================
+
+hostname HomeRouter
+
+!
+! ===== Interface Configuration =====
+!
+
+interface Gig0/0
+  ip address 192.168.1.1 255.255.255.0
+  description LAN Interface
+  no shutdown
+!
+
+interface Gig0/1
+  ip address 203.0.113.2 255.255.255.252
+  description WAN Uplink
+  no shutdown
+!
+
+
+!
+! ===== Static Routes =====
+!
+
+
+ip route 0.0.0.0/0 203.0.113.1
+
+
+
+!
+! ===== Services =====
+!
+
+
+ntp server pool.ntp.org
+
+
+
+
+ip name-server 1.1.1.1 8.8.8.8 
+
+
+
+ip domain-name home.local
+crypto key generate rsa modulus 2048
+line vty 0 4
+ transport input ssh
+ login local
+
+
+!
+! ===== Banner =====
+!
+
+banner motd @
+Unauthorized access prohibited.
+
+@
+
+
+!
+! ===== End =====
+!
+end

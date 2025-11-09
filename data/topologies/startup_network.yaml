@@ -1,0 +1,52 @@
+schema_version: 1.0
+topology_name: Startup Network
+
+defaults:
+  domain: startup.local
+  dns_servers: [9.9.9.9, 8.8.4.4]
+  ntp_servers: [time.google.com]
+  banner: |
+    StartupNet - Authorized Personnel Only.
+
+devices:
+  - name: R1
+    hostname: HQ-Router
+    type: router
+    vendor: cisco
+    interfaces:
+      - name: Gig0/0
+        ip: 10.0.0.1
+        mask: 255.255.255.0
+        description: Office LAN
+      - name: Gig0/1
+        ip: 172.16.0.1
+        mask: 255.255.255.252
+        description: WAN to Branch
+    routes:
+      - destination: 192.168.0.0/24
+        next_hop: 172.16.0.2
+    services: [ssh, ntp, dns]
+
+  - name: SW1
+    hostname: HQ-Switch
+    type: switch
+    vendor: cisco
+    vlans:
+      - id: 10
+        name: ENGINEERING
+      - id: 20
+        name: HR
+      - id: 30
+        name: GUEST
+    interfaces:
+      - name: Gig0/1
+        mode: access
+        vlan: 10
+        description: Dev Machine
+      - name: Gig0/2
+        mode: access
+        vlan: 20
+        description: HR Laptop
+      - name: Gig0/24
+        mode: trunk
+        description: Uplink to HQ Router

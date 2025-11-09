@@ -1,0 +1,53 @@
+schema_version: 1.0
+topology_name: Home Network
+
+defaults:
+  domain: home.local
+  dns_servers:
+    - 1.1.1.1
+    - 8.8.8.8
+  ntp_servers:
+    - pool.ntp.org
+  banner: |
+    Unauthorized access prohibited.
+
+devices:
+  - name: R1
+    hostname: HomeRouter
+    type: router
+    vendor: cisco
+    interfaces:
+      - name: Gig0/0
+        ip: 192.168.1.1
+        mask: 255.255.255.0
+        description: LAN Interface
+      - name: Gig0/1
+        ip: 203.0.113.2
+        mask: 255.255.255.252
+        description: WAN Uplink
+    routes:
+      - destination: 0.0.0.0/0
+        next_hop: 203.0.113.1
+    services: [ssh, ntp, dns]
+
+  - name: SW1
+    hostname: HomeSwitch
+    type: switch
+    vendor: cisco
+    vlans:
+      - id: 10
+        name: STAFF
+      - id: 20
+        name: GUEST
+    interfaces:
+      - name: Gig0/1
+        mode: access
+        vlan: 10
+        description: PC1 Connection
+      - name: Gig0/2
+        mode: access
+        vlan: 20
+        description: Guest Wi-Fi
+      - name: Gig0/24
+        mode: trunk
+        description: Uplink to Router

@@ -1,0 +1,94 @@
+! ============================================================
+!  Autofig Generated Router Configuration
+! ============================================================
+
+hostname HomeRouter
+
+!
+! ===== Interface Configuration =====
+!
+
+interface Gig0/0
+  ip address 192.168.1.1 255.255.255.0
+  description LAN Interface
+  no shutdown
+!
+
+interface Gig0/1
+  ip address 203.0.113.2 255.255.255.252
+  description WAN Uplink
+  no shutdown
+!
+
+interface Loopback0
+  ip address 10.255.255.1 255.255.255.255
+  description No description
+  no shutdown
+!
+
+
+!
+! ===== Static Routes =====
+!
+
+! No static routes defined
+
+!
+
+!
+! ===== OSPF Configuration =====
+!
+
+router ospf 1
+
+ network 192.168.1.0 0.0.0.255 area 0
+
+ network 10.255.255.1 0.0.0.0 area 0
+
+
+
+
+
+! ===== Services =====
+!
+
+
+ntp server pool.ntp.org
+
+
+
+
+ip name-server 1.1.1.1 8.8.8.8 
+
+
+
+ip domain-name home.local
+crypto key generate rsa modulus 2048
+line vty 0 4
+ transport input ssh
+ login local
+
+
+!
+! ===== DHCP Configuration =====
+!
+
+
+ip dhcp pool HOME_POOL
+ network 192.168.1.0 255.255.255.0
+ default-router 192.168.1.1
+ dns-server  8.8.8.8 
+
+
+
+
+
+!
+! ===== Banner =====
+!
+
+
+!
+! ===== End =====
+!
+end

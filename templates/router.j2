@@ -22,9 +22,23 @@ interface {{ intf.name }}
 {% for route in device.routes %}
 ip route {{ route.destination }} {{ route.next_hop }}
 {% endfor %}
+{% else %}
+! No static routes defined
 {% endif %}
+!
 
 !
+! ===== OSPF Configuration =====
+!
+{% if device.ospf %}
+router ospf {{ device.ospf.process_id }}
+{% for net in device.ospf.networks %}
+ network {{ net.network }} {{ net.wildcard }} area {{ net.area }}
+{% endfor %}
+{% endif %}
+
+
+
 ! ===== Services =====
 !
 {% if 'ntp' in device.services %}
@@ -44,6 +58,20 @@ line vty 0 4
  transport input ssh
  login local
 {% endif %}
+
+!
+! ===== DHCP Configuration =====
+!
+{% if device.dhcp and device.dhcp.pools %}
+{% for pool in device.dhcp.pools %}
+ip dhcp pool {{ pool.name }}
+ network {{ pool.network }} {{ pool.mask }}
+ default-router {{ pool.default_router }}
+{% if pool.dns %} dns-server {% for d in pool.dns %} {{ d }} {% endfor %}{% endif %}
+{% endfor %}
+{% endif %}
+
+
 
 !
 ! ===== Banner =====

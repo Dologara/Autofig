@@ -1,0 +1,68 @@
+! ============================================================
+!  Autofig Generated Configuration
+! ============================================================
+
+hostname {{ device.hostname }}
+
+!
+! ===== Interfaces =====
+!
+{% if device.interfaces %}
+{% for intf in device.interfaces %}
+interface {{ intf.name }}
+{% if intf.ip %} ip address {{ intf.ip }} {{ intf.mask }} {% endif %}
+{% if intf.description %} description {{ intf.description }} {% endif %}
+ no shutdown
+!
+{% endfor %}
+{% else %}
+! No interfaces defined
+{% endif %}
+
+!
+! ===== Static Routes =====
+!
+{% if device.routes %}
+{% for route in device.routes %}
+ip route {{ route.destination }} {{ route.next_hop }}
+{% endfor %}
+{% endif %}
+
+!
+! ===== Services =====
+!
+{% if device.services %}
+{% if "ntp" in device.services and device.ntp_servers %}
+{% for server in device.ntp_servers %}
+ntp server {{ server }}
+{% endfor %}
+{% endif %}
+{% if "dns" in device.services and device.dns_servers %}
+ip name-server {% for server in device.dns_servers %} {{ server }} {% endfor %}
+{% endif %}
+{% endif %}
+
+!
+! ===== SSH =====
+!
+{% if "ssh" in device.services %}
+ip domain-name {{ device.domain | default('autonet.local') }}
+crypto key generate rsa modulus {{ device.ssh_rsa_bits | default(2048) }}
+line vty 0 4
+ transport input ssh
+ login local
+{% endif %}
+
+!
+! ===== Banner =====
+!
+{% if device.banner %}
+banner motd @
+{{ device.banner }}
+@
+{% endif %}
+
+!
+! ===== End =====
+!
+end

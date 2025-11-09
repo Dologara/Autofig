@@ -12,23 +12,38 @@ hostname {{ device.hostname }}
 vlan {{ vlan.id }}
  name {{ vlan.name }}
 {% endfor %}
+{% else %}
+! No VLANs defined
 {% endif %}
 
 !
 ! ===== Interface Configuration =====
 !
+{% if device.interfaces %}
 {% for intf in device.interfaces %}
 interface {{ intf.name }}
-{% if intf.get('mode') == 'access' %}
+{% if intf.mode == "access" %}
  switchport mode access
  switchport access vlan {{ intf.vlan }}
-{% elif intf.get('mode') == 'trunk' %}
+{% elif intf.mode == "trunk" %}
  switchport mode trunk
 {% endif %}
- description {{ intf.description | default("No description") }}
+{% if intf.port_security and intf.port_security.enabled %}
+ switchport port-security
+ switchport port-security maximum {{ intf.port_security.max_mac | default(1) }}
+ switchport port-security violation {{ intf.port_security.violation | default('shutdown') }}
+{% endif %}
+
+{% if intf.description %}
+ description {{ intf.description }}
+{% endif %}
  no shutdown
 !
 {% endfor %}
+{% else %}
+! No interfaces defined
+{% endif %}
+
 
 !
 ! ===== Services =====
@@ -46,6 +61,17 @@ line vty 0 4
  transport input ssh
  login local
 {% endif %}
+
+
+!
+! ===== Spanning Tree =====
+!
+{% if device.stp %}
+spanning-tree mode {{ device.stp.mode }}
+{% endif %}
+
+
+
 
 !
 ! ===== Banner =====

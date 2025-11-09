@@ -1,0 +1,11 @@
+vendor: cisco
+type: switch
+
+defaults:
+  os: ios
+  ssh_rsa_bits: 2048
+  services: [ssh, ntp]
+  banner: |
+    Cisco Switch - Autofig Generated Config
+  ntp_servers:
+    - pool.ntp.org
