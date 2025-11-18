@@ -7,7 +7,7 @@ hostname {{ device.hostname }}
 !
 ! ===== VLAN Configuration =====
 !
-{% if device.vlans %}
+{% if device.vlans | default([]) %}
 {% for vlan in device.vlans %}
 vlan {{ vlan.id }}
  name {{ vlan.name }}
@@ -19,16 +19,21 @@ vlan {{ vlan.id }}
 !
 ! ===== Interface Configuration =====
 !
-{% if device.interfaces %}
+{% if device.interfaces | default([]) %}
 {% for intf in device.interfaces %}
 interface {{ intf.name }}
 {% if intf.mode == "access" %}
  switchport mode access
- switchport access vlan {{ intf.vlan }}
+ switchport access vlan {{ intf.vlan | default(1) }}
 {% elif intf.mode == "trunk" %}
  switchport mode trunk
 {% endif %}
 {% if intf.description %} description {{ intf.description }} {% endif %}
+{% if intf.port_security and intf.port_security.enabled %}
+ switchport port-security
+ switchport port-security maximum {{ intf.port_security.max_mac | default(1) }}
+ switchport port-security violation {{ intf.port_security.violation | default("shutdown") }}
+{% endif %}
  no shutdown
 !
 {% endfor %}
@@ -39,7 +44,7 @@ interface {{ intf.name }}
 !
 ! ===== SVI Configuration =====
 !
-{% if device.svis %}
+{% if device.svis | default([]) %}
 ip routing
 {% for svi in device.svis %}
 interface Vlan{{ svi.vlan }}
@@ -54,45 +59,71 @@ interface Vlan{{ svi.vlan }}
 !
 ! ===== Routing =====
 !
-{% if device.static_routes %}
+{% if device.static_routes | default([]) %}
 {% for route in device.static_routes %}
 ip route {{ route.destination }} {{ route.next_hop }}
 {% endfor %}
+{% else %}
+! No static routes defined
 {% endif %}
 
-{% if device.ospf %}
-router ospf {{ device.ospf.process_id }}
+{% if device.ospf | default({}) %}
+router ospf {{ device.ospf.process_id | default(1) }}
 {% if device.ospf.router_id %} router-id {{ device.ospf.router_id }} {% endif %}
-{% for net in device.ospf.networks %}
- network {{ net.network }} {{ net.wildcard }} area {{ net.area }}
+{% for net in device.ospf.networks | default([]) %}
+ network {{ net.network }} {{ net.wildcard }} area {{ net.area | default(0) }}
 {% endfor %}
+{% else %}
+! OSPF not configured
 {% endif %}
 
 !
 ! ===== Services =====
 !
-{% if device.services.ntp_servers %}
-{% for server in device.services.ntp_servers %}
+{% if device.ntp_servers | default([]) %}
+{% for server in device.ntp_servers %}
 ntp server {{ server }}
 {% endfor %}
 {% endif %}
 
-{% if device.services.domain %}
-ip domain-name {{ device.services.domain }}
+{% if device.domain %}
+ip domain-name {{ device.domain }}
 {% endif %}
 
-crypto key generate rsa modulus {{ device.services.ssh_rsa_bits | default(2048) }}
+{% if 'ssh' in device.services | default([]) %}
+crypto key generate rsa modulus {{ device.ssh_rsa_bits | default(2048) }}
+{% endif %}
+
 line vty 0 4
  transport input ssh
  login local
 
 !
+! ===== SNMP Configuration =====
+!
+{% if device.snmp | default({}) %}
+snmp-server community {{ device.snmp.community | default("public") }} RO
+snmp-server location {{ device.snmp.location | default("undefined") }}
+{% endif %}
+
+!
+! ===== Spanning Tree =====
+!
+{% if device.stp | default({}) %}
+spanning-tree mode {{ device.stp.mode | default("rapid-pvst") }}
+{% else %}
+! Spanning Tree not configured
+{% endif %}
+
+!
 ! ===== Banner =====
 !
-{% if device.security and device.security.banner %}
+{% if device.banner | default('') %}
 banner motd @
-{{ device.security.banner }}
+{{ device.banner }}
 @
+{% else %}
+! No banner defined
 {% endif %}
 
 !

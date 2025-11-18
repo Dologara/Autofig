@@ -12,3 +12,5 @@ defaults:
   dns_servers:
     - 1.1.1.1
     - 8.8.8.8
+  domain: mls.local
+

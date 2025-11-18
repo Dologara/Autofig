@@ -1,0 +1,30 @@
+devices:
+- hostname: Router1
+  name: R1
+  type: router
+  vendor: Cisco
+- hostname: Router2
+  name: R2
+  type: router
+  vendor: Cisco
+- hostname: MLSwitch1
+  name: MLS1
+  type: multilayer_switch
+  vendor: Cisco
+- hostname: MLSwitch2
+  name: MLS2
+  type: multilayer_switch
+  vendor: Cisco
+- hostname: Switch1
+  name: SW1
+  type: switch
+  vendor: Cisco
+- hostname: Switch2
+  name: SW2
+  type: switch
+  vendor: Cisco
+- hostname: Switch3
+  name: SW3
+  type: switch
+  vendor: Cisco
+topology_name: First
