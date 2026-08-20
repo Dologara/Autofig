@@ -1,7 +1,8 @@
 import yaml
 from pathlib import Path
 
-TOPOLOGY_DIR = Path("data/topologies")
+PACKAGE_ROOT = Path(__file__).resolve().parent.parent
+TOPOLOGY_DIR = PACKAGE_ROOT / "data" / "topologies"
 TOPOLOGY_DIR.mkdir(parents=True, exist_ok=True)
 
 def ask_int(prompt, default=0):
