@@ -18,7 +18,7 @@ Build the core CLI-based engine that:
 - Command:
   ```bash
   python main.py --input inputs/lab.yaml
-```
+
 ## Key Components
 
 |Module|Description|
