@@ -1,19 +1,27 @@
-"""Render Jinja2 templates and save configuration files."""
+"""Render Jinja2 templates and save configuration files.
+
+Enhanced with:
+- Type hints
+- Logging
+- Standardized error response format
+- Bug fixes (proper indentation)
+"""
 
 from jinja2 import Environment, FileSystemLoader, TemplateNotFound
 from pathlib import Path
 from datetime import datetime
+from typing import Dict, List, Optional
+from .logging_setup import get_logger
+from .config import TEMPLATE_DIR, FALLBACK_TEMPLATE
+from .exceptions import TemplateRenderError
 
-
-# Paths
-PACKAGE_ROOT = Path(__file__).resolve().parent.parent
-TEMPLATE_DIR = PACKAGE_ROOT / "templates"
+logger = get_logger(__name__)
 
 # Jinja2 setup
 jinja_env = Environment(loader=FileSystemLoader(TEMPLATE_DIR))
 
 
-def get_template(template_name):
+def get_template(template_name: str):
     """Get a Jinja2 template by name.
     
     Args:
@@ -25,15 +33,17 @@ def get_template(template_name):
     Raises:
         TemplateNotFound: If template doesn't exist
     """
+    logger.debug(f"Loading template: {template_name}")
     try:
         return jinja_env.get_template(template_name)
     except TemplateNotFound:
+        logger.error(f"Template not found: {template_name}")
         raise TemplateNotFound(
             f"Template '{template_name}' not found in {TEMPLATE_DIR}"
         )
 
 
-def render_device_config(device, template_name=None):
+def render_device_config(device: Dict, template_name: Optional[str] = None) -> str:
     """Render a single device's configuration.
     
     Args:
@@ -44,30 +54,39 @@ def render_device_config(device, template_name=None):
         Rendered config as string
     
     Raises:
-        TemplateNotFound: If template doesn't exist
+        TemplateRenderError: If rendering fails
     """
+    device_name = device.get("name", "Unknown")
+    logger.info(f"Rendering config for device: {device_name}")
+    
     # Infer template if not provided
     if not template_name:
         device_type = device.get("type", "").lower()
         template_name = f"{device_type}.j2"
+        logger.debug(f"Inferred template: {template_name}")
     
     try:
         template = get_template(template_name)
     except TemplateNotFound:
         # Fallback to base template
-        template = get_template("base_template.j2")
+        logger.warning(f"Template {template_name} not found, using fallback")
+        template = get_template(FALLBACK_TEMPLATE)
     
-    # Render with device data
-    rendered = template.render(
-        device=device,
-        defaults=device,
-        now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    )
-    
-    return rendered
+    try:
+        # Render with device data
+        rendered = template.render(
+            device=device,
+            defaults=device,
+            now=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        )
+        logger.debug(f"Rendered {len(rendered)} bytes for {device_name}")
+        return rendered
+    except Exception as e:
+        logger.error(f"Failed to render template for {device_name}: {e}")
+        raise TemplateRenderError(f"Failed to render config for {device_name}: {e}")
 
 
-def save_config(config_text, output_path):
+def save_config(config_text: str, output_path: Path | str) -> Path:
     """Save rendered config to file.
     
     Args:
@@ -78,14 +97,16 @@ def save_config(config_text, output_path):
         Path object of saved file
     """
     output_path = Path(output_path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    logger.debug(f"Saving config to: {output_path}")
     
+    output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(config_text)
     
+    logger.info(f"Saved config file: {output_path}")
     return output_path
 
 
-def render_topology(topology, output_dir="output"):
+def render_topology(topology: Dict, output_dir: Path | str = "output") -> List[Path]:
     """Render all devices in a topology to files.
     
     Args:
@@ -96,6 +117,9 @@ def render_topology(topology, output_dir="output"):
         List of saved file paths
     """
     output_dir = Path(output_dir)
+    logger.info(f"Rendering topology with {len(topology.get('devices', []))} devices")
+    logger.info(f"Output directory: {output_dir}")
+    
     output_dir.mkdir(exist_ok=True)
     
     saved_files = []
@@ -113,13 +137,16 @@ def render_topology(topology, output_dir="output"):
             saved_files.append(saved_path)
         
         except Exception as e:
-            print(f"Error rendering {device.get('name', 'Unknown')}: {e}")
+            logger.error(f"Error rendering {device.get('name', 'Unknown')}: {e}")
     
+    logger.info(f"Topology rendering complete: {len(saved_files)} files saved")
     return saved_files
 
 
-def render_topology_with_errors(topology, output_dir="output"):
+def render_topology_with_errors(topology: Dict, output_dir: Path | str = "output") -> Dict:
     """Render topology and return both successes and errors (for API use).
+    
+    Standardized error response format for Phase 2 FastAPI.
     
     Args:
         topology: Processed topology dict
@@ -127,12 +154,14 @@ def render_topology_with_errors(topology, output_dir="output"):
     
     Returns:
         Dict with keys:
-            - saved: list of file paths (as strings)
-            - errors: list of error dicts with 'device' and 'error' keys
-            - total_devices: total device count
-            - successful: successful render count
+            - status: 'success', 'partial_success', or 'failure'
+            - data: {'saved': [...], 'generated': count}
+            - errors: list of error dicts with 'device', 'error', 'severity'
+            - metadata: {'timestamp': ..., 'total_devices': ...}
     """
     output_dir = Path(output_dir)
+    logger.info(f"Rendering topology with error handling: {len(topology.get('devices', []))} devices")
+    
     output_dir.mkdir(exist_ok=True)
     
     saved_files = []
@@ -147,14 +176,37 @@ def render_topology_with_errors(topology, output_dir="output"):
             saved_files.append(str(saved_path))
         
         except Exception as e:
+            logger.error(f"Error rendering {device.get('name', 'Unknown')}: {e}")
             errors.append({
                 "device": device.get('name', 'Unknown'),
-                "error": str(e)
+                "error": str(e),
+                "severity": "error"
             })
     
+    total_devices = len(topology.get("devices", []))
+    successful = len(saved_files)
+    
+    # Determine overall status
+    if len(errors) == 0:
+        status = "success"
+    elif successful > 0:
+        status = "partial_success"
+    else:
+        status = "failure"
+    
+    logger.info(f"Rendering complete - Status: {status}, Success: {successful}/{total_devices}")
+    
     return {
-        "saved": saved_files,
+        "status": status,
+        "data": {
+            "saved": saved_files,
+            "generated": successful
+        },
         "errors": errors,
-        "total_devices": len(topology.get("devices", [])),
-        "successful": len(saved_files)
+        "metadata": {
+            "timestamp": datetime.now().isoformat(),
+            "total_devices": total_devices,
+            "successful": successful,
+            "failed": len(errors)
+        }
     }
