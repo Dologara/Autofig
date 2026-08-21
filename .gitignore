@@ -172,3 +172,11 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Generated files
+output/
+logs/
+
+# Generated files
+output/
+logs/

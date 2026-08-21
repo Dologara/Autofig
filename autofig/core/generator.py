@@ -50,7 +50,8 @@ def prompt_topology_selection(topology_files):
 
 def generate_from_cli(selected_topologies, output_dir="output"):
     """CLI wrapper: generate configs for selected topologies.
-Args:
+    
+    Args:
         selected_topologies: List of topology file paths
         output_dir: Output directory
     

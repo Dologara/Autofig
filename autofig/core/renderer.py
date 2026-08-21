@@ -50,7 +50,8 @@ def render_device_config(device, template_name=None):
     if not template_name:
         device_type = device.get("type", "").lower()
         template_name = f"{device_type}.j2"
-try:
+    
+    try:
         template = get_template(template_name)
     except TemplateNotFound:
         # Fallback to base template
@@ -108,7 +109,8 @@ def render_topology(topology, output_dir="output"):
             filename = f"{device['name']}_config.txt"
             filepath = output_dir / filename
             saved_path = save_config(config, filepath)
-saved_files.append(saved_path)
+            
+            saved_files.append(saved_path)
         
         except Exception as e:
             print(f"Error rendering {device.get('name', 'Unknown')}: {e}")
