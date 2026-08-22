@@ -1,52 +1,34 @@
-"""Configuration and constants for Autofig.
-
-Environment-based configuration for flexibility (especially for deployment).
-"""
+"""Configuration and constants for Autofig."""
 
 import os
 from pathlib import Path
 
-# Package root directory
+# Package root: autofig/core/config.py → parent.parent is autofig/
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 
-# Directories
+# Main directories
 DATA_DIR = PACKAGE_ROOT / "data"
+TEMPLATE_DIR = PACKAGE_ROOT / "templates"
+LOG_DIR = PACKAGE_ROOT / "logs"
+
+# Subdirectories within DATA_DIR
 TOPOLOGY_DIR = DATA_DIR / "topologies"
 DEVICE_DEFAULTS_DIR = DATA_DIR / "devices"
-TEMPLATE_DIR = PACKAGE_ROOT / "templates"
 
-# Output configuration (can be overridden via environment variables)
-OUTPUT_DIR = os.getenv("AUTOFIG_OUTPUT_DIR", "output")
-LOGS_DIR = os.getenv("AUTOFIG_LOGS_DIR", "logs")
+# Output directory (can be overridden via env var)
+AUTOFIG_OUTPUT_DIR = Path(os.getenv("AUTOFIG_OUTPUT_DIR", Path.home() / "autofig_output"))
 
 # Logging configuration
-LOG_LEVEL = os.getenv("AUTOFIG_LOG_LEVEL", "INFO")
-LOG_FILE = os.path.join(LOGS_DIR, "autofig.log")
+AUTOFIG_LOG_LEVEL = os.getenv("AUTOFIG_LOG_LEVEL", "INFO")
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
 # Template configuration
-DEFAULT_TEMPLATE_EXTENSION = ".j2"
 FALLBACK_TEMPLATE = "base_template.j2"
 
-# Validation configuration
-HOSTNAME_MAX_LENGTH = 15
-DEVICE_NAME_MAX_LENGTH = 255
+# Feature flags (for future phases)
+ENABLE_NETBOX_INTEGRATION = os.getenv("ENABLE_NETBOX_INTEGRATION", "false").lower() == "true"
+ENABLE_ANSIBLE_EXPORT = os.getenv("ENABLE_ANSIBLE_EXPORT", "false").lower() == "true"
 
-# API configuration (for Phase 2)
-API_VERSION = "1.0"
-API_TIMEOUT = 30  # seconds
-
-# Vendor configuration
-DEFAULT_VENDOR = "Cisco"
-DEFAULT_OS = "ios"
-
-# Feature flags (for future use)
-ENABLE_NETBOX_INTEGRATION = os.getenv("AUTOFIG_NETBOX_ENABLED", "false").lower() == "true"
-ENABLE_ANSIBLE_EXPORT = os.getenv("AUTOFIG_ANSIBLE_ENABLED", "false").lower() == "true"
-
-# Validate critical directories exist
-if not TEMPLATE_DIR.exists():
-    raise FileNotFoundError(f"Template directory not found: {TEMPLATE_DIR}")
-
-if not DEVICE_DEFAULTS_DIR.exists():
-    raise FileNotFoundError(f"Device defaults directory not found: {DEVICE_DEFAULTS_DIR}")
+# Create directories if they don't exist
+for directory in [DATA_DIR, TEMPLATE_DIR, LOG_DIR, TOPOLOGY_DIR, DEVICE_DEFAULTS_DIR, AUTOFIG_OUTPUT_DIR]:
+    directory.mkdir(parents=True, exist_ok=True)

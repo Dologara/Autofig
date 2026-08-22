@@ -1,78 +1,58 @@
-"""Centralized logging configuration for Autofig.
-
-All modules use this to get a configured logger.
-Ensures consistent logging across the application.
-"""
+"""Logging configuration for Autofig."""
 
 import logging
 import logging.handlers
 from pathlib import Path
-from .config import LOG_LEVEL, LOG_FORMAT, LOGS_DIR
+
+from .config import LOG_DIR, AUTOFIG_LOG_LEVEL, LOG_FORMAT
 
 
-def setup_logging(name: str = "autofig") -> logging.Logger:
-    """Set up logging for Autofig.
-    
-    Configures:
-    - Console handler (stdout)
-    - File handler (logs/autofig.log)
-    - Consistent format
+def setup_logging(name: str = "autofig", log_level: str = None) -> logging.Logger:
+    """Set up logging with file and console handlers.
     
     Args:
-        name: Logger name (module name)
+        name: Logger name
+        log_level: Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
     
     Returns:
         Configured logger instance
     """
+    if log_level is None:
+        log_level = AUTOFIG_LOG_LEVEL
+    
     logger = logging.getLogger(name)
+    logger.setLevel(log_level)
     
-    # Only configure root logger once (avoid duplicate handlers)
-    if logger.hasHandlers():
-        return logger
+    # Create formatters
+    formatter = logging.Formatter(LOG_FORMAT)
     
-    logger.setLevel(LOG_LEVEL)
-    
-    # Create logs directory if it doesn't exist
-    Path(LOGS_DIR).mkdir(parents=True, exist_ok=True)
-    
-    # Console handler (stdout)
+    # Console handler
     console_handler = logging.StreamHandler()
-    console_handler.setLevel(LOG_LEVEL)
-    console_formatter = logging.Formatter(LOG_FORMAT)
-    console_handler.setFormatter(console_formatter)
-    
-    # File handler (logs/autofig.log)
-    try:
-        file_handler = logging.handlers.RotatingFileHandler(
-            Path(LOGS_DIR) / "autofig.log",
-            maxBytes=5 * 1024 * 1024,  # 5MB
-            backupCount=3
-        )
-        file_handler.setLevel(LOG_LEVEL)
-        file_formatter = logging.Formatter(LOG_FORMAT)
-        file_handler.setFormatter(file_formatter)
-        logger.addHandler(file_handler)
-    except Exception as e:
-        logger.warning(f"Could not set up file logging: {e}")
-    
-    # Add console handler
+    console_handler.setLevel(log_level)
+    console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
     
+    # File handler (rotating)
+    log_file = LOG_DIR / f"{name}.log"
+    file_handler = logging.handlers.RotatingFileHandler(
+        log_file,
+        maxBytes=5 * 1024 * 1024,  # 5MB
+        backupCount=3,
+    )
+    file_handler.setLevel(log_level)
+    file_handler.setFormatter(formatter)
+    logger.addHandler(file_handler)
+    
     return logger
 
 
-def get_logger(name: str) -> logging.Logger:
-    """Get a logger instance.
-    
-    Simpler alternative to logging.getLogger() that ensures setup.
+def get_logger(name: str = "autofig") -> logging.Logger:
+    """Get or create a logger.
     
     Args:
-        name: Logger name (usually __name__)
+        name: Logger name
     
     Returns:
-        Configured logger instance
+        Logger instance
     """
-    logger = logging.getLogger(name)
-    if not logger.hasHandlers():
-        setup_logging(name)
-    return logger
+    return logging.getLogger(name)

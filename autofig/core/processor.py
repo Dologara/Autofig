@@ -1,22 +1,25 @@
-"""Process and merge topology configurations.
+"""Process and merge topology configuration hierarchies.
 
-Enhanced with:
-- Type hints
-- Logging
+Handles the merge order for defaults:
+1. Device-type defaults (base layer)
+2. Topology-level defaults (override device-type)
+3. Device-specific config (highest precedence)
 """
 
 from typing import Dict, Callable
-from .logging_setup import get_logger
+import logging
 
-logger = get_logger(__name__)
+from .vendors import _find_registry_key
+
+logger = logging.getLogger(__name__)
 
 
 def merge_dicts(base: Dict, override: Dict) -> Dict:
-    """Recursively merge override dict into base dict.
+    """Recursively merge two dicts; override takes precedence.
     
     Args:
-        base: Base dict (won't be modified)
-        override: Dict to merge in (takes precedence)
+        base: Base configuration dict
+        override: Dict with overrides (takes precedence)
     
     Returns:
         Merged dict with override values taking precedence
@@ -43,8 +46,8 @@ def process_topology(topology: Dict, device_defaults_map: Dict) -> Dict:
     """Prepare topology for rendering: merge defaults, validate structure.
     
     Merge order (lowest to highest precedence):
-    1. Global defaults (from topology['defaults'])
-    2. Vendor+device type defaults (from device_defaults_map)
+    1. Device-type defaults (base layer - from device_defaults_map)
+    2. Topology-level defaults (from topology['defaults'])
     3. Device-specific config (highest precedence)
     
     Args:
@@ -64,66 +67,60 @@ def process_topology(topology: Dict, device_defaults_map: Dict) -> Dict:
         device_name = device.get("name", "Unknown")
         logger.debug(f"Processing device: {device_name}")
         
-        # Start with global defaults
-        merged = topology.get("defaults", {}).copy()
-        logger.debug(f"Started with global defaults")
-        
-        # Merge vendor + device type defaults
+        # Start with device-type defaults (base layer)
+        merged = {}
         vendor = device.get("vendor", "")
         device_type = device.get("type", "")
         
-        if vendor in device_defaults_map:
-            if device_type in device_defaults_map[vendor]:
-                defaults = device_defaults_map[vendor][device_type].get("defaults", {})
-                logger.debug(f"Merging defaults for {vendor}/{device_type}")
-                merged = merge_dicts(merged, defaults)
+        # Find the correct vendor key (case-insensitive)
+        if vendor:
+            registry_vendor = _find_registry_key(vendor)
+            if registry_vendor and registry_vendor in device_defaults_map:
+                if device_type in device_defaults_map[registry_vendor]:
+                    defaults = device_defaults_map[registry_vendor][device_type].get("defaults", {})
+                    logger.debug(f"Starting with device-type defaults for {registry_vendor}/{device_type}")
+                    merged = defaults.copy()
+        
+        # Merge topology-level defaults (override device-type defaults)
+        topology_defaults = topology.get("defaults", {})
+        if topology_defaults:
+            logger.debug(f"Merging topology-level defaults")
+            merged = merge_dicts(merged, topology_defaults)
         
         # Merge device-specific config (overrides everything)
         logger.debug(f"Merging device-specific config for {device_name}")
         merged = merge_dicts(merged, device)
         
         processed_devices.append(merged)
-        logger.debug(f"Device {device_name} processing complete")
     
     processed["devices"] = processed_devices
-    logger.info(f"Topology processing complete: {len(processed_devices)} devices")
     return processed
 
 
 def build_device_defaults_map(loader_func: Callable) -> Dict:
-    """Build a map of vendor→type→defaults for efficient lookups.
+    """Build a map of device-type defaults for all vendors.
+    
+    Calls loader_func(vendor, device_type) for each vendor/type combo.
     
     Args:
-        loader_func: Function to load device defaults (e.g., load_device_defaults)
+        loader_func: Function that loads defaults: load_device_defaults(vendor, device_type)
     
     Returns:
-        Dict structure: {vendor: {device_type: defaults_dict}}
-    
-    Example:
-        {'Cisco': {'router': {...}, 'switch': {...}}}
+        Dict: {vendor: {device_type: {defaults_dict}}}
     """
-    logger.info("Building device defaults map")
-    
-    # For now, only Cisco. Expand later with more vendors/types.
-    vendors = ["Cisco"]
-    device_types = ["router", "switch", "multilayer_switch"]
+    from .vendors import get_supported_vendors, get_supported_device_types
     
     defaults_map = {}
     
-    for vendor in vendors:
-        logger.debug(f"Loading defaults for vendor: {vendor}")
+    for vendor in get_supported_vendors():
         defaults_map[vendor] = {}
-        
-        for dev_type in device_types:
+        for device_type in get_supported_device_types(vendor):
             try:
-                defaults = loader_func(vendor, dev_type)
-                if defaults:
-                    defaults_map[vendor][dev_type] = defaults
-                    logger.debug(f"Loaded defaults for {vendor}/{dev_type}")
+                defaults = loader_func(vendor, device_type)
+                defaults_map[vendor][device_type] = {"defaults": defaults}
+                logger.debug(f"Loaded defaults for {vendor}/{device_type}")
             except Exception as e:
-                # Skip if device type doesn't exist for this vendor
-                logger.warning(f"Could not load defaults for {vendor}/{dev_type}: {e}")
-                pass
+                logger.warning(f"Failed to load defaults for {vendor}/{device_type}: {e}")
+                defaults_map[vendor][device_type] = {"defaults": {}}
     
-    logger.info(f"Device defaults map built with {len(defaults_map)} vendors")
     return defaults_map

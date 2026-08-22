@@ -49,68 +49,82 @@ DEVICE_TYPES: Dict[str, Dict] = {
     },
     "multilayer_switch": {
         "name": "Multilayer Switch",
-        "description": "Layer 2/3 switching device (routing + VLANs)",
-        "default_protocols": ["stp", "static", "ospf"],
+        "description": "Layer 3-capable switch (routing + VLANs)",
+        "default_protocols": ["stp", "ospf"],
     },
-    # Future device types:
-    # "firewall": {
-    #     "name": "Firewall",
-    #     "description": "Security appliance",
-    #     "default_protocols": ["static"],
-    # },
-    # "load_balancer": {
-    #     "name": "Load Balancer",
-    #     "description": "Traffic distribution appliance",
-    #     "default_protocols": ["static"],
-    # },
 }
 
 
-def get_supported_vendors() -> List[str]:
-    """Get list of supported vendor names.
-    
-    Returns:
-        List of vendor names (e.g., ['Cisco', 'Juniper'])
-    """
-    return list(VENDOR_REGISTRY.keys())
-
-
-def get_supported_device_types(vendor: str) -> List[str]:
-    """Get device types supported by a vendor.
+def _find_registry_key(vendor: str) -> str:
+    """Find vendor key in registry (case-insensitive).
     
     Args:
-        vendor: Vendor name (e.g., 'Cisco')
+        vendor: Vendor name (any case)
     
     Returns:
-        List of device types, or empty list if vendor not found
+        Actual key from VENDOR_REGISTRY, or None if not found
     """
-    if vendor in VENDOR_REGISTRY:
-        return VENDOR_REGISTRY[vendor]["device_types"]
-    return []
+    if not vendor:
+        return None
+    
+    vendor_lower = vendor.lower()
+    for key in VENDOR_REGISTRY:
+        if key.lower() == vendor_lower:
+            return key
+    
+    return None
+
+
+def get_supported_vendors() -> List[str]:
+    """Get list of supported vendors.
+    
+    Returns:
+        List of vendor names as they appear in registry
+    """
+    return list(VENDOR_REGISTRY.keys())
 
 
 def is_vendor_supported(vendor: str) -> bool:
     """Check if a vendor is supported.
     
     Args:
-        vendor: Vendor name
+        vendor: Vendor name (case-insensitive)
     
     Returns:
         True if supported, False otherwise
     """
-    return vendor in VENDOR_REGISTRY
+    return _find_registry_key(vendor) is not None
 
 
 def is_device_type_supported(vendor: str, device_type: str) -> bool:
     """Check if a device type is supported for a vendor.
     
     Args:
-        vendor: Vendor name
-        device_type: Device type (e.g., 'router')
+        vendor: Vendor name (case-insensitive)
+        device_type: Device type name
     
     Returns:
         True if supported, False otherwise
     """
-    if vendor not in VENDOR_REGISTRY:
+    registry_vendor = _find_registry_key(vendor)
+    if not registry_vendor:
         return False
-    return device_type in VENDOR_REGISTRY[vendor]["device_types"]
+    
+    supported_types = VENDOR_REGISTRY[registry_vendor].get("device_types", [])
+    return device_type in supported_types
+
+
+def get_supported_device_types(vendor: str) -> List[str]:
+    """Get supported device types for a vendor.
+    
+    Args:
+        vendor: Vendor name (case-insensitive)
+    
+    Returns:
+        List of device types, or empty list if vendor not found
+    """
+    registry_vendor = _find_registry_key(vendor)
+    if not registry_vendor:
+        return []
+    
+    return VENDOR_REGISTRY[registry_vendor].get("device_types", [])

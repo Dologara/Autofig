@@ -1,7 +1,7 @@
 """Tests for autofig.core.validator module."""
 
 import pytest
-from autofig.core.validator import validate_device, validate_topology, validate_field
+from autofig.core.validators import validate_device, validate_topology, validate_field
 from autofig.core.exceptions import TopologyValidationError, DeviceValidationError
 
 
