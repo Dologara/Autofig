@@ -1,6 +1,8 @@
 README.md
 setup.py
 autofig/__init__.py
+autofig/cli.py
+autofig/yaml_builder.py
 autofig.egg-info/PKG-INFO
 autofig.egg-info/SOURCES.txt
 autofig.egg-info/dependency_links.txt
@@ -16,6 +18,5 @@ autofig/core/loader.py
 autofig/core/logging_setup.py
 autofig/core/processor.py
 autofig/core/renderer.py
-autofig/core/validator.py
+autofig/core/validators.py
 autofig/core/vendors.py
-autofig/core/yaml_builder.py

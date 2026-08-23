@@ -16,7 +16,7 @@ TOPOLOGY_DIR = DATA_DIR / "topologies"
 DEVICE_DEFAULTS_DIR = DATA_DIR / "devices"
 
 # Output directory (can be overridden via env var)
-AUTOFIG_OUTPUT_DIR = Path(os.getenv("AUTOFIG_OUTPUT_DIR", Path.home() / "autofig_output"))
+AUTOFIG_OUTPUT_DIR = Path(os.getenv("AUTOFIG_OUTPUT_DIR", PACKAGE_ROOT / "output"))
 
 # Logging configuration
 AUTOFIG_LOG_LEVEL = os.getenv("AUTOFIG_LOG_LEVEL", "INFO")
