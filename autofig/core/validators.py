@@ -5,10 +5,19 @@ import re
 from typing import Dict, Any
 
 from .vendors import is_vendor_supported, is_device_type_supported
+from .exceptions import DeviceValidationError, TopologyValidationError
 
 
-class ValidationError(Exception):
-    """Raised when validation fails."""
+class ValidationError(ValueError):
+    """Raised when a single form field fails validation (IP, hostname, etc).
+
+    Subclasses ValueError so callers that only care "was this bad input"
+    (e.g. validate_field's generic type checks) can catch either this or
+    a plain ValueError. Structure-level validation (validate_device,
+    validate_topology) raises the more specific DeviceValidationError /
+    TopologyValidationError from exceptions.py instead, so callers can
+    distinguish "the YAML is malformed" from "the user typed a bad IP".
+    """
     pass
 
 
@@ -26,22 +35,22 @@ def validate_device(device: Dict[str, Any]) -> bool:
         True if valid
     
     Raises:
-        ValidationError: If validation fails
+        DeviceValidationError: If validation fails
     """
     required_fields = ["name", "type", "vendor", "hostname"]
     
     for field in required_fields:
         if field not in device:
-            raise ValidationError(f"Device missing required field: {field}")
+            raise DeviceValidationError(f"Device missing required field: {field}")
     
     vendor = device.get("vendor", "")
     device_type = device.get("type", "")
     
     if not is_vendor_supported(vendor):
-        raise ValidationError(f"Unsupported vendor: {vendor}")
+        raise DeviceValidationError(f"Unsupported vendor: {vendor}")
     
     if not is_device_type_supported(vendor, device_type):
-        raise ValidationError(f"Device type '{device_type}' not supported for vendor '{vendor}'")
+        raise DeviceValidationError(f"Device type '{device_type}' not supported for vendor '{vendor}'")
     
     return True
 
@@ -56,23 +65,24 @@ def validate_topology(topology: Dict[str, Any]) -> bool:
         True if valid
     
     Raises:
-        ValidationError: If validation fails
+        TopologyValidationError: If the topology's own structure is invalid
+        DeviceValidationError: If a device within it is invalid
     """
     if not isinstance(topology, dict):
-        raise ValidationError("Topology must be a dict")
+        raise TopologyValidationError("Topology must be a dict")
     
     if "devices" not in topology:
-        raise ValidationError("Topology missing 'devices' key")
+        raise TopologyValidationError("Topology missing 'devices' key")
     
     devices = topology.get("devices", [])
     
     if not isinstance(devices, list):
-        raise ValidationError("'devices' must be a list")
+        raise TopologyValidationError("'devices' must be a list")
     
     if len(devices) == 0:
-        raise ValidationError("Topology must have at least one device")
+        raise TopologyValidationError("Topology must have at least one device")
     
-    # Validate each device
+    # Validate each device (raises DeviceValidationError on failure)
     for device in devices:
         validate_device(device)
     
@@ -141,7 +151,11 @@ def validate_ip(value: str) -> str:
 
 
 def validate_subnet_mask(value: str) -> str:
-    """Validate a subnet mask (e.g., '255.255.255.0').
+    """Validate a dotted-decimal subnet mask (e.g., '255.255.255.0').
+    
+    Checks the value is a valid IPv4-shaped address AND that its bits form
+    a contiguous mask (a run of 1s followed by 0s) - this covers every
+    real subnet mask, not just a fixed shortlist of common /8-/32 values.
     
     Args:
         value: Subnet mask to validate
@@ -153,20 +167,19 @@ def validate_subnet_mask(value: str) -> str:
         ValidationError: If not a valid subnet mask
     """
     value = value.strip()
-    valid_masks = [
-        "255.255.255.0", "255.255.255.128", "255.255.255.192",
-        "255.255.255.224", "255.255.255.240", "255.255.255.248",
-        "255.255.255.252", "255.255.255.254", "255.255.255.255",
-        "255.255.254.0", "255.255.252.0", "255.255.248.0",
-        "255.255.240.0", "255.255.0.0", "255.254.0.0",
-        "255.0.0.0", "0.0.0.0",
-    ]
-    
-    if value not in valid_masks:
+    try:
+        addr = ipaddress.IPv4Address(value)
+    except ValueError:
         raise ValidationError(
-            f"Invalid subnet mask: {value} (expected CIDR mask like 255.255.255.0)"
+            f"Invalid subnet mask: {value} (expected dotted-decimal, e.g. 255.255.255.0)"
         )
-    
+
+    bits = "".join(f"{octet:08b}" for octet in addr.packed)
+    if "01" in bits:
+        raise ValidationError(
+            f"Invalid subnet mask: {value} (bits must be a contiguous run of "
+            f"1s followed by 0s, e.g. 255.255.255.0, 255.255.254.0)"
+        )
     return value
 
 
@@ -269,17 +282,27 @@ def validate_interface_name(value: str) -> str:
         ValidationError: If not a valid interface name
     """
     value = value.strip()
-    
-    valid_prefixes = [
-        "GigabitEthernet", "FastEthernet", "Ethernet",
-        "Port-channel", "Loopback", "Vlan", "Tunnel",
-        "Serial", "E0", "E1", "G0", "G1", "F0", "F1",
-    ]
-    
-    if not any(value.startswith(prefix) for prefix in valid_prefixes):
+
+    # Split into a letter/hyphen prefix and a numeric suffix (slot/port
+    # notation), e.g. "TenGigabitEthernet1/0/1" -> ("TenGigabitEthernet", "1/0/1")
+    match = re.match(r"^([A-Za-z][A-Za-z-]*)(\d[\d/.:]*)$", value)
+    if not match:
         raise ValidationError(
             f"Invalid interface name: {value} "
-            f"(expected e.g., GigabitEthernet0/0, FastEthernet0/1)"
+            f"(expected e.g., GigabitEthernet0/0, TenGigabitEthernet1/0/1, FastEthernet0/1)"
         )
-    
+
+    prefix = match.group(1)
+    # Accept any *Ethernet family (Gigabit/TenGigabit/FastEthernet/AppGigabit/...),
+    # the common short forms, and the other standard interface types.
+    known_families = {
+        "Port-channel", "Loopback", "Vlan", "Tunnel", "Serial",
+        "E", "G", "F", "Te", "Fo",
+    }
+    if not (prefix.endswith("Ethernet") or prefix in known_families):
+        raise ValidationError(
+            f"Invalid interface name: {value} "
+            f"(expected e.g., GigabitEthernet0/0, TenGigabitEthernet1/0/1, FastEthernet0/1)"
+        )
+
     return value

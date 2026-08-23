@@ -558,12 +558,27 @@ class PresetForm:
         print(f"\nGenerating {preset.upper()} topology...")
         return build_from_preset(preset, name)
 
-    def run(self):
-        """Main entry point."""
+    def run(self, preset: str = None, name: str = None):
+        """Main entry point.
+
+        Args:
+            preset: Optional preset ('quick'/'medium'/'enterprise'/'custom').
+                If given, skips the interactive preset question.
+            name: Optional topology name. If given, skips the interactive
+                name question.
+        """
         self.show_banner()
 
-        preset = self.ask_preset()
-        name = self.ask_topology_name()
+        if preset is None:
+            preset = self.ask_preset()
+        else:
+            print(f"Using preset: {preset}")
+
+        if name is None:
+            name = self.ask_topology_name()
+        else:
+            name = name.lower().replace(" ", "_")
+
         self._last_global_settings = None
         self._last_device_counts = None
         self._last_devices = None

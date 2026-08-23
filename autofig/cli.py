@@ -4,16 +4,18 @@ import click
 from pathlib import Path
 import sys
 
+from autofig import __version__
 from autofig.core.loader import load_yaml, load_device_defaults
 from autofig.core.processor import process_topology, build_device_defaults_map
-from autofig.core.renderer import render_topology
+from autofig.core.renderer import render_topology_with_errors
+from autofig.core.validators import validate_topology
 from autofig.core.cli_builder import PresetForm
 from autofig.core.config import AUTOFIG_OUTPUT_DIR
-from autofig.core.exceptions import AutofigError
+from autofig.core.exceptions import AutofigError, TopologyValidationError, DeviceValidationError
 
 
 @click.group()
-@click.version_option(version="1.0.0-rc1")
+@click.version_option(version=__version__)
 def cli():
     """🚀 Autofig - Network Configuration Generator
     
@@ -42,7 +44,10 @@ def generate(input, output):
         click.echo(f"📂 Output directory: {output_dir}")
         click.echo(f"📖 Loading topology from {input}...")
         topology = load_yaml(input)
-        
+
+        click.echo("🔍 Validating topology...")
+        validate_topology(topology)
+
         click.echo("🔧 Building device defaults...")
         device_defaults_map = build_device_defaults_map(load_device_defaults)
         
@@ -50,19 +55,33 @@ def generate(input, output):
         processed_topology = process_topology(topology, device_defaults_map)
         
         click.echo("🎨 Rendering configurations...")
-        success, output_path = render_topology(processed_topology, output_dir)
-        
-        if success:
-            # List all generated files
-            if output_path.exists():
-                config_files = list(output_path.glob("*.conf"))
-                click.echo(f"\n✅ SUCCESS! Generated {len(config_files)} config files:")
-                for filepath in config_files:
-                    click.echo(f"   - {filepath.name}")
-            click.echo(f"\n📁 All configs saved to: {output_path}")
+        result = render_topology_with_errors(processed_topology, output_dir)
+
+        generated = result["data"]["generated"]
+        total = result["metadata"]["total_devices"]
+
+        if result["status"] == "success":
+            click.echo(f"\n✅ SUCCESS! Generated {generated} config file(s):")
+            for filepath in result["data"]["saved"]:
+                click.echo(f"   - {Path(filepath).name}")
+            click.echo(f"\n📁 All configs saved to: {output_dir}")
+        elif result["status"] == "partial_success":
+            click.echo(f"\n⚠️  PARTIAL SUCCESS: {generated}/{total} config(s) generated.")
+            for filepath in result["data"]["saved"]:
+                click.echo(f"   - {Path(filepath).name}")
+            click.echo("\nErrors:")
+            for err in result["errors"]:
+                click.echo(f"   ✗ {err['device']}: {err['error']}", err=True)
+            click.echo(f"\n📁 Successful configs saved to: {output_dir}")
         else:
-            click.echo(f"\n⚠️  No configs were generated", err=True)
-    
+            click.echo(f"\n❌ FAILED: no configs were generated.", err=True)
+            for err in result["errors"]:
+                click.echo(f"   ✗ {err['device']}: {err['error']}", err=True)
+            sys.exit(1)
+
+    except (TopologyValidationError, DeviceValidationError) as e:
+        click.echo(f"❌ Invalid topology: {e}", err=True)
+        sys.exit(1)
     except FileNotFoundError as e:
         click.echo(f"❌ ERROR: File not found - {e}", err=True)
         sys.exit(1)
@@ -95,7 +114,7 @@ def build(preset, name):
     """
     try:
         form = PresetForm()
-        form.run()
+        form.run(preset=preset, name=name)
     except KeyboardInterrupt:
         click.echo("\n\n❌ Build cancelled by user")
         sys.exit(1)
@@ -118,7 +137,7 @@ def info():
     click.echo("\n" + "="*60)
     click.echo("🚀 AUTOFIG - Network Configuration Generator")
     click.echo("="*60)
-    click.echo("\nVersion: 1.0.0-rc1")
+    click.echo(f"\nVersion: {__version__}")
     click.echo("Status: Beta")
     click.echo("License: MIT")
     

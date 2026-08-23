@@ -13,7 +13,6 @@ from typing import Dict, List, Any
 # parent.parent is the autofig/ package root.
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 TOPOLOGY_DIR = PACKAGE_ROOT / "data" / "topologies"
-TOPOLOGY_DIR.mkdir(parents=True, exist_ok=True)
 
 
 class YAMLBuilder:
@@ -125,6 +124,7 @@ class YAMLBuilder:
         if not filename:
             filename = self.topology.get("name", "topology")
 
+        TOPOLOGY_DIR.mkdir(parents=True, exist_ok=True)
         output_path = TOPOLOGY_DIR / f"{filename}.yaml"
 
         with open(output_path, "w") as f:
