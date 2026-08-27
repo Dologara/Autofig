@@ -1,0 +1,23 @@
+|Sub-Phase|What             |Priority  |
+|---------|-----------------|----------|
+|**2.0**  |SQLite database  |🔴 CRITICAL|
+|**2.1**  |FastAPI endpoints|🔴 CRITICAL|
+|**2.2**  |CLI commands     |🟡 NICE    |
+|**2.3**  |Web UI           |🟡 NICE    |
+|**TOTAL**|-                |-         |
+
+Open architectural decisions the plan doesn't address
+
+1. Dual source of truth for topologies. Right now topologies live as YAML files in autofig/data/topologies/, and both autofig build and autofig generate read/write there directly. If Phase 2 adds SQLite as a second storage layer for the API, you now have two places a topology can live. Does the DB become the single source of truth (with the YAML files becoming just seed/example fixtures)? Or do both stay independently valid — meaning a topology edited via the API might not be visible to the CLI, and vice versa? This is the single most consequential decision in the whole phase and it's currently unaddressed. I'd resolve it before 2.0.2 ("design schema"), not after.
+
+2. "Design schema" (10 min) is probably the most underscoped step in the plan. The real decision buried in there is: store each topology as one JSON/YAML blob in a single column (simple, matches what you already have, but not queryable — can't ask "which topologies use OSPF" without JSON functions), or fully normalize into topologies/devices/interfaces tables (queryable, but a lot more schema + mapping code, and it eats into 2.0.4-2.0.8's already-tight budget). That's not a 10-minute call — it's worth actually sitting with, since it shapes every CRUD function after it.
+
+3. Same duplication risk you already hit once, about to recur. cli.py's generate command currently reimplements the load→validate→process→render pipeline inline, because the shared generate_configs() orchestrator got dropped from core/__init__.py somewhere in the refactor (I flagged this as a "could be better," never fixed). If POST /generate in 2.1.9 does the same thing — reimplements that sequence a second time — you'll have the same pipeline logic living in two places, which is exactly what your original design doc said to avoid ("CLI/API/UI all use same core logic"). This is a good moment to actually reintroduce that shared function and have both cli.py and the new FastAPI route call it, rather than let a third copy show up later when the web UI needs it too.
+
+4. CORS is scheduled reactively. 2.3.11 is literally "Fix CORS" — meaning you already know it's coming, but you've scheduled discovering the pain before preventing it. Since you know the web UI will call the API cross-origin, configuring CORS as part of 2.1's initial FastAPI setup avoids a dedicated "now go fix the thing I knew was broken" step later.
+
+5. Sync/async mismatch, worth knowing about even if you don't act on it. FastAPI nudges you toward async def handlers, but sqlite3 (stdlib) and your core pipeline are both blocking/synchronous. For a single-user local tool this genuinely doesn't matter in practice, but if you write async def routes calling blocking sqlite3, that's a real anti-pattern (blocks the event loop) that'll come up if anyone reviews this code — either keep routes as plain def (FastAPI threadpools those automatically) or don't reach for async here at all.
+
+6. No integration-testing step, same blind spot as Phase 1. Every sub-phase has unit tests, but nothing explicitly says "start the real server and hit a real endpoint with a real topology end-to-end." That's exactly the gap that let 65/65 passing tests coexist with a completely broken CLI for a while. "2.1.10 Test endpoints" might informally cover this — worth making it explicit rather than assumed.
+
+
