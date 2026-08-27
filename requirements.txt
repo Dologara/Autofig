@@ -1,6 +1,6 @@
 
 # =============================
-# Autofig - Phase 2 Core Generator
+# Autofig - Phase 1 Core Generator
 # =============================
 
 # YAML parsing
@@ -9,14 +9,11 @@ PyYAML==6.0.2
 # Template rendering
 Jinja2==3.1.4
 
-# Optional: for future file and path handling (safe to include early)
-pathlib==1.0.1
-
-# For network automation / SSH pushing
-netmiko==4.2.0
-
 # For argument parsing and CLI
 click==8.1.7
+
+# Not used yet - included ahead of time for the Phase 2 SSH-push feature
+netmiko==4.2.0
 
 # For testing
 pytest==8.3.2

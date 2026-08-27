@@ -1,36 +1,57 @@
-# Autofig 
+# Autofig
 
-Autofig is a vendor-agnostic network configuration generator. It takes structured YAML inputs and uses Jinja2 templates to generate CLI configurations for various network devices.
+Network configuration generator for learning labs. Takes network topologies (YAML or interactive form) and generates Cisco IOS configurations.
 
----
+## Quick Start
+
+```bash
+git clone https://github.com/Dologara/Autofig.git
+cd Autofig
+pip install -e .
+
+# Interactive form
+autofig build
+
+# Generate from YAML
+autofig generate --input topology.yaml --output ./configs
+```
+
+## What It Does
+
+Define a network topology and automatically generate Cisco IOS configurations for routers, switches, and multilayer switches. Supports both YAML input and interactive form-based topology building.
 
 ## Project Status
 
-- In early development
-- Vault planning complete
-- Folder structure initialized
-- CLI and core logic 
+**Phase 1: Complete**
+- Interactive topology builder with validation
+- YAML generation and parsing
+- Cisco configuration rendering
+- CLI interface
+- 49/65 tests passing
 
----
+**Phase 2: Planned**
+- FastAPI wrapper
+- Enhanced validation
+
+**Phase 3: Planned**
+- Web UI
+- Form-based YAML builder
+
+**Phase 4: Roadmap**
+- Multi-vendor support (Juniper, Arista)
+- NetBox integration
 
 ## Requirements
 
 - Python 3.10+
-- Dependencies in `requirements.txt`:
-  - `pyyaml`
-  - `jinja2`
-  - `click`
-  - `rich`
-
----
+- pyyaml
+- jinja2
+- click
 
 ## Docs
 
-All design notes and plans are maintained in an [Obsidian vault](docs/).
+Architecture and design notes are in `/docs/`.
 
----
+## License
 
-## Roadmap
-
-Planned milestones can be found in:  
-`docs/05_Milestones/`
+MIT
