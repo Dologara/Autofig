@@ -27,13 +27,15 @@ Define a network topology and automatically generate Cisco IOS configurations fo
 - YAML generation and parsing
 - Cisco configuration rendering
 - CLI interface
-- 49/65 tests passing
 
-**Phase 2: Planned**
-- FastAPI wrapper
-- Enhanced validation
+**Phase 2: Complete**
+- SQLite database persistence
+- CLI commands for stored topologies
+
+82/82 tests passing.
 
 **Phase 3: Planned**
+- FastAPI wrapper
 - Web UI
 - Form-based YAML builder
 
